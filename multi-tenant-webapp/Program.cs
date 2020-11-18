@@ -21,6 +21,8 @@ namespace multi_tenant_webapp
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .UseServiceProviderFactory(
+                    new AutofacMultitenantServiceProviderFactory(DependencyResolver.RegisterServices));
     }
 }

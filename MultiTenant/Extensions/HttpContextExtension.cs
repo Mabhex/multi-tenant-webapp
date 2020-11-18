@@ -7,6 +7,9 @@ using MultiTenant.Abstraction;
 
 namespace MultiTenant.Extensions
 {
+    /// <summary>
+    /// Get current tenant from HttpContext
+    /// </summary>
     public static class HttpContextExtension
     {
         public static ITenantContext<TTenant> GeTenantContext<TTenant>(this HttpContext context) where TTenant:class,ITenant,new()

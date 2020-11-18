@@ -8,6 +8,10 @@ using MultiTenant.Abstraction;
 
 namespace MultiTenant
 {
+    /// <summary>
+    /// Middle to populate Tenant Context on each HTTP request
+    /// </summary>
+    /// <typeparam name="TTenant"></typeparam>
     internal class MultiTenantMiddleware<TTenant> where TTenant : class, ITenant, new()
     {
         private readonly RequestDelegate _next;
@@ -19,23 +23,28 @@ namespace MultiTenant
 
         public async Task Invoke(HttpContext context)
         {
-            var accessor = context.RequestServices.GetRequiredService<ITenantContextAccessor<TTenant>>();
-
-            if (accessor.TenantContext == null)
+            if (context.Request.Path.ToString().Contains("api"))
             {
-                var strategy = context.RequestServices.GetRequiredService<ITenantResolverStrategy>();
-                var identifier = await strategy.GetTenantIdentifierAsync(context);
-                var store = context.RequestServices.GetRequiredService<ITenantStore<TTenant>>();
-                accessor.TenantContext = new TenantContext<TTenant>()
+                var accessor = context.RequestServices.GetRequiredService<ITenantContextAccessor<TTenant>>();
+
+                if (accessor.TenantContext == null)
                 {
-                    Tenant = await store.TryGetByIdentifierAsync(identifier)
-                };
+                    var strategy = context.RequestServices.GetRequiredService<ITenantResolverStrategy>();
+                    var identifier = await strategy.GetTenantIdentifierAsync(context);
+                    var store = context.RequestServices.GetRequiredService<ITenantStore<TTenant>>();
+                    accessor.TenantContext = new TenantContext<TTenant>()
+                    {
+                        Tenant = await store.TryGetByIdentifierAsync(identifier)
+                    };
+                }
+
             }
 
             if (_next != null)
             {
                 await _next(context);
             }
+
         }
     }
 }

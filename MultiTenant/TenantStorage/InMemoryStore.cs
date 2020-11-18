@@ -5,6 +5,10 @@ using MultiTenant.Abstraction;
 
 namespace MultiTenant.TenantStorage
 {
+    /// <summary>
+    /// InMemoryStore to store tenant mapping
+    /// </summary>
+    /// <typeparam name="TTenant"></typeparam>
     public class InMemoryStore<TTenant>:ITenantStore<TTenant> where TTenant:class,ITenant,new()
     {
         private readonly ConcurrentDictionary<string, TTenant> _tenantMap;
@@ -16,6 +20,7 @@ namespace MultiTenant.TenantStorage
 
         public async Task<TTenant> TryGetByIdentifierAsync(string identifier)
         {
+            identifier ??= "";
             _tenantMap.TryGetValue(identifier, out var result);
             return await Task.FromResult(result);
         }

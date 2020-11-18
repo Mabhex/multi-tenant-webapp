@@ -16,7 +16,7 @@ namespace MultiTenant.TenantResolverStrategy
                 throw new MultiTenantException(null,
                     new ArgumentException($"\"{nameof(context)}\" type must be of type HttpContext", nameof(context)));
 
-            if (((HttpContext) context).Request.Headers.TryGetValue("x-tenant", out var identifier))
+            if (!((HttpContext) context).Request.Headers.TryGetValue("x-tenant", out var identifier))
                 throw new ArgumentException("Tenant header is missing");
 
             return await Task.FromResult(identifier);

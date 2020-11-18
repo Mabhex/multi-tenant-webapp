@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MultiTenant.Abstraction;
 
-namespace MultiTenant
+namespace MultiTenant.Extensions
 {
     /// <summary>
     /// Configure tenant services
